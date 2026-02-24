@@ -1,5 +1,6 @@
 package com.company.inventoryapi.service;
 
+import com.company.inventoryapi.dto.ProductRequestDTO;
 import com.company.inventoryapi.entity.Product;
 import com.company.inventoryapi.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product save(Product product) {
+    public Product save(ProductRequestDTO dto) {
+        Product product = new Product();
+        product.setCode(dto.getCode());
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
         return productRepository.save(product);
     }
 }
