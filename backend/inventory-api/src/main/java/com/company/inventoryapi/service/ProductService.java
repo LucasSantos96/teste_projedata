@@ -3,6 +3,7 @@ package com.company.inventoryapi.service;
 import com.company.inventoryapi.dto.ProductRequestDTO;
 import com.company.inventoryapi.entity.Product;
 import com.company.inventoryapi.exception.BusinessException;
+import com.company.inventoryapi.exception.NotFoundException;
 import com.company.inventoryapi.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,11 @@ public class ProductService {
 
     public List<Product> findAll() {
         return productRepository.findAll();
+    }
+
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
     }
 
     public Product save(ProductRequestDTO dto) {
