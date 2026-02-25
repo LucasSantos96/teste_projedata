@@ -9,6 +9,7 @@ import { Table } from '../components/ui/Table'
 import type { TableColumn } from '../components/ui/Table'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchProducts } from '../store/products/productsSlice'
+import { compositionApiCapabilities } from '../services/compositionService'
 import {
   clearCompositionFeedback,
   clearCompositionList,
@@ -97,6 +98,11 @@ export function CompositionPage() {
       return
     }
 
+    if (!compositionApiCapabilities.listByProduct) {
+      dispatch(clearCompositionList())
+      return
+    }
+
     void dispatch(fetchCompositionByProduct(selectedProductId))
   }, [dispatch, selectedProductId])
 
@@ -133,7 +139,7 @@ export function CompositionPage() {
   }, [compositionState.items, editingItem, rawMaterialsState.items])
 
   const handleRetryComposition = () => {
-    if (!selectedProductId) {
+    if (!selectedProductId || !compositionApiCapabilities.listByProduct) {
       return
     }
 
@@ -279,25 +285,33 @@ export function CompositionPage() {
       header: 'Actions',
       className: 'text-right',
       render: (item) => (
-        <div className="flex items-center justify-end gap-2">
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => openEditModal(item)}
-            aria-label={`Edit ${item.rawMaterialName}`}
-          >
-            <Pencil size={16} aria-hidden="true" />
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => openDeleteDialog(item)}
-            aria-label={`Delete ${item.rawMaterialName}`}
-            disabled={String(compositionState.deletingId) === String(item.id)}
-          >
-            <Trash2 size={16} aria-hidden="true" />
-          </Button>
-        </div>
+        compositionApiCapabilities.update || compositionApiCapabilities.remove ? (
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => openEditModal(item)}
+              aria-label={`Edit ${item.rawMaterialName}`}
+              disabled={!compositionApiCapabilities.update}
+            >
+              <Pencil size={16} aria-hidden="true" />
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => openDeleteDialog(item)}
+              aria-label={`Delete ${item.rawMaterialName}`}
+              disabled={
+                !compositionApiCapabilities.remove ||
+                String(compositionState.deletingId) === String(item.id)
+              }
+            >
+              <Trash2 size={16} aria-hidden="true" />
+            </Button>
+          </div>
+        ) : (
+          <span className="text-xs text-slate-400">N/A</span>
+        )
       ),
     },
   ]
@@ -347,6 +361,15 @@ export function CompositionPage() {
           </Button>
         </div>
       </section>
+
+      {!compositionApiCapabilities.listByProduct ? (
+        <section className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+          <p className="text-sm font-medium text-amber-800">
+            Backend currently exposes only POST for product raw-material association. List/edit/delete
+            require GET/PUT/DELETE endpoints in `ProductRawMaterialController`.
+          </p>
+        </section>
+      ) : null}
 
       {productsState.error ? (
         <section className="rounded-xl border border-red-200 bg-red-50 p-4 sm:p-5">

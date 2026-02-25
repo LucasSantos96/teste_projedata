@@ -1,13 +1,20 @@
 import { apiRequest } from './api'
 import type { ProductComposition, ProductCompositionPayload } from '../types/composition'
+import type { ApiError } from './api'
+
+export const compositionApiCapabilities = {
+  listByProduct: true,
+  update: true,
+  remove: true,
+} as const
 
 const COMPOSITION_ENDPOINTS = {
-  listByProduct: (productId: string | number) => `/products/${productId}/composition`,
-  createByProduct: (productId: string | number) => `/products/${productId}/composition`,
+  listByProduct: (productId: string | number) => `/products/${productId}/raw-materials`,
+  createByProduct: (productId: string | number) => `/products/${productId}/raw-materials`,
   updateByProduct: (productId: string | number, compositionId: string | number) =>
-    `/products/${productId}/composition/${compositionId}`,
+    `/products/${productId}/raw-materials/${compositionId}`,
   deleteByProduct: (productId: string | number, compositionId: string | number) =>
-    `/products/${productId}/composition/${compositionId}`,
+    `/products/${productId}/raw-materials/${compositionId}`,
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -61,7 +68,11 @@ function mapComposition(
       'Unnamed Raw Material',
     ),
     requiredQuantity: asNumber(
-      data.requiredQuantity ?? data.required_quantity ?? data.quantity ?? data.amount,
+      data.requiredQuantity ??
+        data.quantityRequired ??
+        data.required_quantity ??
+        data.quantity ??
+        data.amount,
     ),
   }
 }
@@ -93,8 +104,18 @@ function extractEntity(payload: unknown): unknown {
 }
 
 export async function listByProduct(productId: string | number): Promise<ProductComposition[]> {
-  const response = await apiRequest<unknown>(COMPOSITION_ENDPOINTS.listByProduct(productId))
-  return extractList(response).map((item, index) => mapComposition(item, index, productId))
+  try {
+    const response = await apiRequest<unknown>(COMPOSITION_ENDPOINTS.listByProduct(productId))
+    return extractList(response).map((item, index) => mapComposition(item, index, productId))
+  } catch (error) {
+    const apiError = error as ApiError
+
+    if (apiError?.status === 404 || apiError?.status === 405) {
+      return []
+    }
+
+    throw error
+  }
 }
 
 export async function create(
@@ -103,7 +124,10 @@ export async function create(
 ): Promise<ProductComposition> {
   const response = await apiRequest<unknown>(COMPOSITION_ENDPOINTS.createByProduct(productId), {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      rawMaterialId: payload.rawMaterialId,
+      quantityRequired: payload.requiredQuantity,
+    }),
   })
 
   return mapComposition(extractEntity(response), 0, productId)
@@ -118,7 +142,10 @@ export async function update(
     COMPOSITION_ENDPOINTS.updateByProduct(productId, compositionId),
     {
       method: 'PUT',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        rawMaterialId: payload.rawMaterialId,
+        quantityRequired: payload.requiredQuantity,
+      }),
     },
   )
 

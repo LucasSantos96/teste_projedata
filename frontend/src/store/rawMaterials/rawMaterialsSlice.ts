@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import type { ApiError } from '../../services/api'
 import { create, list, remove, update } from '../../services/rawMaterialsService'
 import type { RawMaterial, RawMaterialPayload } from '../../types/rawMaterial'
 
@@ -45,6 +46,24 @@ function getErrorMessage(error: unknown, fallback: string): string {
   }
 
   return fallback
+}
+
+function getDeleteErrorMessage(error: unknown): string {
+  const defaultMessage = 'Unable to delete raw material right now. Please try again.'
+
+  if (!error || typeof error !== 'object') {
+    return defaultMessage
+  }
+
+  const apiError = error as Partial<ApiError>
+  const status = typeof apiError.status === 'number' ? apiError.status : null
+  const message = typeof apiError.message === 'string' ? apiError.message : ''
+
+  if (status === 500 || status === 409) {
+    return 'Unable to delete raw material because it is linked to product composition. Remove the associations first.'
+  }
+
+  return message.trim() ? message : defaultMessage
 }
 
 export const fetchRawMaterials = createAsyncThunk<RawMaterial[], void, { rejectValue: string }>(
@@ -97,9 +116,7 @@ export const deleteRawMaterial = createAsyncThunk<
     await remove(id)
     return id
   } catch (error) {
-    return rejectWithValue(
-      getErrorMessage(error, 'Unable to delete raw material right now. Please try again.'),
-    )
+    return rejectWithValue(getDeleteErrorMessage(error))
   }
 })
 
