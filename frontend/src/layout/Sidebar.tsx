@@ -1,4 +1,6 @@
+import { Factory, Package, PackageOpen, X } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
+import type { LucideIcon } from 'lucide-react'
 
 interface SidebarProps {
   isOpen: boolean
@@ -8,12 +10,13 @@ interface SidebarProps {
 interface NavigationItem {
   to: string
   label: string
+  icon: LucideIcon
 }
 
 const navigationItems: NavigationItem[] = [
-  { to: '/products', label: 'Products' },
-  { to: '/raw-materials', label: 'Raw Materials' },
-  { to: '/production', label: 'Production' },
+  { to: '/products', label: 'Products', icon: Package },
+  { to: '/raw-materials', label: 'Raw Materials', icon: PackageOpen },
+  { to: '/production', label: 'Production', icon: Factory },
 ]
 
 function SidebarNavigation({ onNavigate }: { onNavigate: () => void }) {
@@ -33,7 +36,7 @@ function SidebarNavigation({ onNavigate }: { onNavigate: () => void }) {
             ].join(' ')
           }
         >
-          <span className="h-2 w-2 rounded-full bg-current" />
+          <item.icon size={16} aria-hidden="true" />
           <span>{item.label}</span>
         </NavLink>
       ))}
@@ -100,7 +103,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             className="mb-4 self-end rounded-md p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             aria-label="Close sidebar"
           >
-            x
+            <X size={18} aria-hidden="true" />
           </button>
 
           <SidebarContent onNavigate={onClose} />

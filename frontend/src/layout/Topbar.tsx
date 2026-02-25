@@ -1,3 +1,4 @@
+import { Bell, Menu, Settings } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 
 interface TopbarProps {
@@ -24,7 +25,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
             aria-label="Open navigation menu"
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 md:hidden"
           >
-            <span className="h-0.5 w-5 bg-current" />
+            <Menu size={18} aria-hidden="true" />
           </button>
 
           <div className="min-w-0">
@@ -39,7 +40,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             aria-label="Notifications"
           >
-            N
+            <Bell size={18} aria-hidden="true" />
           </button>
 
           <button
@@ -47,7 +48,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
             className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             aria-label="Settings"
           >
-            S
+            <Settings size={18} aria-hidden="true" />
           </button>
         </div>
       </div>
