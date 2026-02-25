@@ -1,7 +1,7 @@
 import { apiRequest } from './api'
 import type { ProductionSuggestion, ProductionSummary } from '../types/production'
 
-const PRODUCTION_SUGGESTIONS_ENDPOINT = '/production-suggestions'
+const PRODUCTION_SUGGESTIONS_ENDPOINT = '/production/suggestions'
 
 function asRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
