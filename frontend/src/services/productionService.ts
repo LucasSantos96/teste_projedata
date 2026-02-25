@@ -36,7 +36,11 @@ function mapSuggestion(item: unknown, index: number): ProductionSuggestion {
   const productName = asString(data.productName ?? data.product_name ?? data.name, 'Unnamed Product')
   const productPrice = asNumber(data.productPrice ?? data.product_price ?? data.price)
   const producibleQuantity = asNumber(
-    data.producibleQuantity ?? data.producible_quantity ?? data.quantityPossible ?? data.quantity,
+    data.maxProducibleQuantity ??
+      data.producibleQuantity ??
+      data.producible_quantity ??
+      data.quantityPossible ??
+      data.quantity,
   )
   const totalValue = asNumber(
     data.totalValue ?? data.total_value ?? data.total ?? productPrice * producibleQuantity,
@@ -77,9 +81,13 @@ export async function getSuggestions(): Promise<ProductionSummary> {
   const apiGrandTotal = asNumber(data.grandTotalValue ?? data.grand_total_value ?? data.totalValue)
   const grandTotalValue =
     apiGrandTotal || suggestions.reduce((sum, suggestion) => sum + suggestion.totalValue, 0)
+  const totalProductsAnalyzed = asNumber(
+    data.totalProductsAnalyzed ?? data.total_products_analyzed ?? suggestions.length,
+  )
 
   return {
     suggestions,
     grandTotalValue,
+    totalProductsAnalyzed,
   }
 }

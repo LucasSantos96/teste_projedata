@@ -10,6 +10,7 @@ interface ProductionState extends ProductionSummary {
 const initialState: ProductionState = {
   suggestions: [],
   grandTotalValue: 0,
+  totalProductsAnalyzed: 0,
   loading: false,
   error: null,
 }
@@ -51,6 +52,7 @@ const productionSlice = createSlice({
         state.loading = false
         state.suggestions = action.payload.suggestions
         state.grandTotalValue = action.payload.grandTotalValue
+        state.totalProductsAnalyzed = action.payload.totalProductsAnalyzed
       })
       .addCase(fetchProductionSuggestions.rejected, (state, action) => {
         state.loading = false

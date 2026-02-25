@@ -45,7 +45,9 @@ const productionColumns: TableColumn<ProductionSuggestion>[] = [
 
 export function ProductionPage() {
   const dispatch = useAppDispatch()
-  const { suggestions, grandTotalValue, loading, error } = useAppSelector((state) => state.production)
+  const { suggestions, grandTotalValue, totalProductsAnalyzed, loading, error } = useAppSelector(
+    (state) => state.production,
+  )
 
   useEffect(() => {
     void dispatch(fetchProductionSuggestions())
@@ -61,9 +63,6 @@ export function ProductionPage() {
         <h1 className="text-2xl font-semibold text-slate-900">Production</h1>
         <p className="mt-2 text-sm text-slate-600">
           Production suggestions loaded through Redux with summary and table views.
-        </p>
-        <p className="mt-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-          Coming next: CRUD
         </p>
       </header>
 
@@ -118,9 +117,11 @@ export function ProductionPage() {
           </section>
 
           <section className="rounded-xl border border-slate-200 bg-white p-5">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Suggestions Count</h3>
-            <p className="mt-3 text-3xl font-semibold text-slate-900">{suggestions.length}</p>
-            <p className="mt-2 text-sm text-slate-500">Items considered in the production analysis.</p>
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Products Analyzed</h3>
+            <p className="mt-3 text-3xl font-semibold text-slate-900">
+              {loading ? '-' : totalProductsAnalyzed || suggestions.length}
+            </p>
+            <p className="mt-2 text-sm text-slate-500">Total products analyzed by the backend rules.</p>
           </section>
         </aside>
       </div>

@@ -10,4 +10,5 @@ export interface ProductionSuggestion {
 export interface ProductionSummary {
   suggestions: ProductionSuggestion[]
   grandTotalValue: number
+  totalProductsAnalyzed: number
 }
