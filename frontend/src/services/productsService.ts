@@ -1,5 +1,5 @@
 import { apiRequest } from './api'
-import type { Product } from '../types/product'
+import type { Product, ProductPayload } from '../types/product'
 
 const PRODUCTS_ENDPOINT = '/products'
 
@@ -53,7 +53,40 @@ function extractList(payload: unknown): unknown[] {
   return []
 }
 
+function extractEntity(payload: unknown): unknown {
+  if (!payload || typeof payload !== 'object') {
+    return payload
+  }
+
+  const data = asRecord(payload)
+  return data.item ?? data.data ?? data.product ?? payload
+}
+
 export async function list(): Promise<Product[]> {
   const response = await apiRequest<unknown>(PRODUCTS_ENDPOINT)
   return extractList(response).map(mapProduct)
+}
+
+export async function create(payload: ProductPayload): Promise<Product> {
+  const response = await apiRequest<unknown>(PRODUCTS_ENDPOINT, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+  return mapProduct(extractEntity(response), 0)
+}
+
+export async function update(id: Product['id'], payload: ProductPayload): Promise<Product> {
+  const response = await apiRequest<unknown>(`${PRODUCTS_ENDPOINT}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+
+  return mapProduct(extractEntity(response), 0)
+}
+
+export async function remove(id: Product['id']): Promise<void> {
+  await apiRequest<unknown>(`${PRODUCTS_ENDPOINT}/${id}`, {
+    method: 'DELETE',
+  })
 }
