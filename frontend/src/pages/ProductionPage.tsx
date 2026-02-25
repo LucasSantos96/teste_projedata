@@ -62,7 +62,7 @@ export function ProductionPage() {
       <header className="rounded-xl border border-slate-200 bg-white p-6">
         <h1 className="text-2xl font-semibold text-slate-900">Production</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Production suggestions loaded through Redux with summary and table views.
+          View producible items and estimated values based on available stock.
         </p>
       </header>
 
@@ -81,7 +81,9 @@ export function ProductionPage() {
         <section className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-slate-900">Production Suggestions</h2>
-            <p className="mt-1 text-sm text-slate-500">Backend response with producible quantity and value.</p>
+            <p className="mt-1 text-sm text-slate-500">
+              Current producible quantities and estimated values.
+            </p>
           </div>
 
           {loading ? (
@@ -96,7 +98,7 @@ export function ProductionPage() {
               emptyState={
                 <EmptyState
                   title="No production suggestions available"
-                  description="No records were returned by the production suggestions endpoint."
+                  description="No production suggestions are available at the moment."
                 />
               }
             />
@@ -121,7 +123,7 @@ export function ProductionPage() {
             <p className="mt-3 text-3xl font-semibold text-slate-900">
               {loading ? '-' : totalProductsAnalyzed || suggestions.length}
             </p>
-            <p className="mt-2 text-sm text-slate-500">Total products analyzed by the backend rules.</p>
+            <p className="mt-2 text-sm text-slate-500">Total products considered in this analysis.</p>
           </section>
         </aside>
       </div>

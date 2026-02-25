@@ -251,7 +251,7 @@ export function ProductsPage() {
           <div>
             <h1 className="text-2xl font-semibold text-slate-900">Products</h1>
             <p className="mt-2 text-sm text-slate-600">
-              Manage products with create, update and delete operations integrated with API.
+              Manage product records with create, update, and delete actions.
             </p>
           </div>
           <Button leftIcon={<Plus size={16} aria-hidden="true" />} onClick={openCreateModal}>

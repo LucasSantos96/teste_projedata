@@ -255,7 +255,7 @@ export function RawMaterialsPage() {
           <div>
             <h1 className="text-2xl font-semibold text-slate-900">Raw Materials</h1>
             <p className="mt-2 text-sm text-slate-600">
-              Manage raw materials with create, update and delete operations integrated with API.
+              Manage raw material records with create, update, and delete actions.
             </p>
           </div>
           <Button leftIcon={<Plus size={16} aria-hidden="true" />} onClick={openCreateModal}>

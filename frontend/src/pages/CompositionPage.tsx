@@ -365,8 +365,8 @@ export function CompositionPage() {
       {!compositionApiCapabilities.listByProduct ? (
         <section className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
           <p className="text-sm font-medium text-amber-800">
-            Backend currently exposes only POST for product raw-material association. List/edit/delete
-            require GET/PUT/DELETE endpoints in `ProductRawMaterialController`.
+            Some composition features are temporarily unavailable. You can add new associations now.
+            Viewing, editing, and removing associations will be enabled soon.
           </p>
         </section>
       ) : null}
