@@ -256,11 +256,3 @@ Error response format (`ApiErrorResponse`):
   "path": "/products"
 }
 ```
-
-## Notes / Future Improvements
-
-- Add pagination and filtering for list endpoints.
-- Add OpenAPI/Swagger documentation.
-- Add integration tests for controller and repository layers.
-- Improve production suggestion service to avoid mutating repository-returned lists directly.
-- Add authentication/authorization for protected operations.
