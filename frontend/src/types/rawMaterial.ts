@@ -4,3 +4,9 @@ export interface RawMaterial {
   name: string
   stockQuantity: number
 }
+
+export interface RawMaterialPayload {
+  code: string
+  name: string
+  stockQuantity: number
+}

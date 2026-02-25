@@ -1,5 +1,5 @@
 import { apiRequest } from './api'
-import type { RawMaterial } from '../types/rawMaterial'
+import type { RawMaterial, RawMaterialPayload } from '../types/rawMaterial'
 
 const RAW_MATERIALS_ENDPOINT = '/raw-materials'
 
@@ -55,7 +55,40 @@ function extractList(payload: unknown): unknown[] {
   return []
 }
 
+function extractEntity(payload: unknown): unknown {
+  if (!payload || typeof payload !== 'object') {
+    return payload
+  }
+
+  const data = asRecord(payload)
+  return data.item ?? data.data ?? data.rawMaterial ?? payload
+}
+
 export async function list(): Promise<RawMaterial[]> {
   const response = await apiRequest<unknown>(RAW_MATERIALS_ENDPOINT)
   return extractList(response).map(mapRawMaterial)
+}
+
+export async function create(payload: RawMaterialPayload): Promise<RawMaterial> {
+  const response = await apiRequest<unknown>(RAW_MATERIALS_ENDPOINT, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+  return mapRawMaterial(extractEntity(response), 0)
+}
+
+export async function update(id: RawMaterial['id'], payload: RawMaterialPayload): Promise<RawMaterial> {
+  const response = await apiRequest<unknown>(`${RAW_MATERIALS_ENDPOINT}/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(payload),
+  })
+
+  return mapRawMaterial(extractEntity(response), 0)
+}
+
+export async function remove(id: RawMaterial['id']): Promise<void> {
+  await apiRequest<unknown>(`${RAW_MATERIALS_ENDPOINT}/${id}`, {
+    method: 'DELETE',
+  })
 }
