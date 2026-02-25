@@ -11,6 +11,8 @@ import com.company.inventoryapi.repository.ProductRepository;
 import com.company.inventoryapi.repository.RawMaterialRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductRawMaterialService {
 
@@ -28,9 +30,7 @@ public class ProductRawMaterialService {
     }
 
     public ProductRawMaterialResponseDTO associate(Long productId, ProductRawMaterialRequestDTO dto) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
-        
+        Product product = findProductById(productId);
         RawMaterial rawMaterial = rawMaterialRepository.findById(dto.getRawMaterialId())
                 .orElseThrow(() -> new NotFoundException("RawMaterial not found with id: " + dto.getRawMaterialId()));
 
@@ -41,6 +41,41 @@ public class ProductRawMaterialService {
 
         ProductRawMaterial saved = productRawMaterialRepository.save(productRawMaterial);
         return toResponseDTO(saved);
+    }
+
+    public List<ProductRawMaterialResponseDTO> findByProductId(Long productId) {
+        findProductById(productId);
+        return productRawMaterialRepository.findByProductId(productId)
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
+
+    public ProductRawMaterialResponseDTO update(Long productId, Long id, ProductRawMaterialRequestDTO dto) {
+        ProductRawMaterial existing = productRawMaterialRepository.findByIdAndProductId(id, productId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Product raw material not found with id: " + id + " for product id: " + productId));
+
+        RawMaterial rawMaterial = rawMaterialRepository.findById(dto.getRawMaterialId())
+                .orElseThrow(() -> new NotFoundException("RawMaterial not found with id: " + dto.getRawMaterialId()));
+
+        existing.setRawMaterial(rawMaterial);
+        existing.setQuantityRequired(dto.getQuantityRequired());
+
+        ProductRawMaterial updated = productRawMaterialRepository.save(existing);
+        return toResponseDTO(updated);
+    }
+
+    public void delete(Long productId, Long id) {
+        ProductRawMaterial existing = productRawMaterialRepository.findByIdAndProductId(id, productId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Product raw material not found with id: " + id + " for product id: " + productId));
+        productRawMaterialRepository.delete(existing);
+    }
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + productId));
     }
 
     private ProductRawMaterialResponseDTO toResponseDTO(ProductRawMaterial prm) {
