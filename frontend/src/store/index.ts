@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { compositionReducer } from './composition/compositionSlice'
 import { productsReducer } from './products/productsSlice'
 import { productionReducer } from './production/productionSlice'
 import { rawMaterialsReducer } from './rawMaterials/rawMaterialsSlice'
@@ -8,6 +9,7 @@ export const store = configureStore({
     products: productsReducer,
     rawMaterials: rawMaterialsReducer,
     production: productionReducer,
+    composition: compositionReducer,
   },
 })
 

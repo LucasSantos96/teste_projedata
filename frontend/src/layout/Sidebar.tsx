@@ -1,4 +1,4 @@
-import { Factory, Package, PackageOpen, X } from 'lucide-react'
+import { Factory, GitMerge, Package, PackageOpen, X } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 
@@ -16,6 +16,7 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   { to: '/products', label: 'Products', icon: Package },
   { to: '/raw-materials', label: 'Raw Materials', icon: PackageOpen },
+  { to: '/composition', label: 'Composition', icon: GitMerge },
   { to: '/production', label: 'Production', icon: Factory },
 ]
 

@@ -8,6 +8,7 @@ interface TopbarProps {
 const pageLabels: Record<string, string> = {
   '/products': 'Products',
   '/raw-materials': 'Raw Materials',
+  '/composition': 'Composition',
   '/production': 'Production',
 }
 

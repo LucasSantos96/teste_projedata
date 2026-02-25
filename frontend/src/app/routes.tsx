@@ -1,5 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom'
 import { AppLayout } from '../layout/AppLayout'
+import { CompositionPage } from '../pages/CompositionPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { ProductionPage } from '../pages/ProductionPage'
 import { ProductsPage } from '../pages/ProductsPage'
@@ -14,6 +15,7 @@ export function AppRoutes() {
         { index: true, element: <Navigate to="/products" replace /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'raw-materials', element: <RawMaterialsPage /> },
+        { path: 'composition', element: <CompositionPage /> },
         { path: 'production', element: <ProductionPage /> },
         { path: '*', element: <NotFoundPage /> },
       ],
