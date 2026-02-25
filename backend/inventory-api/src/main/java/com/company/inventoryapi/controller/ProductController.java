@@ -1,7 +1,7 @@
 package com.company.inventoryapi.controller;
 
 import com.company.inventoryapi.dto.ProductRequestDTO;
-import com.company.inventoryapi.entity.Product;
+import com.company.inventoryapi.dto.ProductResponseDTO;
 import com.company.inventoryapi.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,20 +21,32 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> findAll() {
-        List<Product> products = productService.findAll();
+    public ResponseEntity<List<ProductResponseDTO>> findAll() {
+        List<ProductResponseDTO> products = productService.findAll();
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Long id) {
-        Product product = productService.findById(id);
+    public ResponseEntity<ProductResponseDTO> findById(@PathVariable Long id) {
+        ProductResponseDTO product = productService.findById(id);
         return ResponseEntity.ok(product);
     }
 
     @PostMapping
-    public ResponseEntity<Product> save(@Valid @RequestBody ProductRequestDTO dto) {
-        Product savedProduct = productService.save(dto);
+    public ResponseEntity<ProductResponseDTO> save(@Valid @RequestBody ProductRequestDTO dto) {
+        ProductResponseDTO savedProduct = productService.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
+        ProductResponseDTO updated = productService.update(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

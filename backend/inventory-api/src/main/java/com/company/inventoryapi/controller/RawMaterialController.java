@@ -1,7 +1,7 @@
 package com.company.inventoryapi.controller;
 
 import com.company.inventoryapi.dto.RawMaterialRequestDTO;
-import com.company.inventoryapi.entity.RawMaterial;
+import com.company.inventoryapi.dto.RawMaterialResponseDTO;
 import com.company.inventoryapi.service.RawMaterialService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,26 +21,26 @@ public class RawMaterialController {
     }
 
     @PostMapping
-    public ResponseEntity<RawMaterial> save(@Valid @RequestBody RawMaterialRequestDTO dto) {
-        RawMaterial saved = rawMaterialService.save(dto);
+    public ResponseEntity<RawMaterialResponseDTO> save(@Valid @RequestBody RawMaterialRequestDTO dto) {
+        RawMaterialResponseDTO saved = rawMaterialService.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @GetMapping
-    public ResponseEntity<List<RawMaterial>> findAll() {
-        List<RawMaterial> rawMaterials = rawMaterialService.findAll();
+    public ResponseEntity<List<RawMaterialResponseDTO>> findAll() {
+        List<RawMaterialResponseDTO> rawMaterials = rawMaterialService.findAll();
         return ResponseEntity.ok(rawMaterials);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RawMaterial> findById(@PathVariable Long id) {
-        RawMaterial rawMaterial = rawMaterialService.findById(id);
+    public ResponseEntity<RawMaterialResponseDTO> findById(@PathVariable Long id) {
+        RawMaterialResponseDTO rawMaterial = rawMaterialService.findById(id);
         return ResponseEntity.ok(rawMaterial);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RawMaterial> update(@PathVariable Long id, @Valid @RequestBody RawMaterialRequestDTO dto) {
-        RawMaterial updated = rawMaterialService.update(id, dto);
+    public ResponseEntity<RawMaterialResponseDTO> update(@PathVariable Long id, @Valid @RequestBody RawMaterialRequestDTO dto) {
+        RawMaterialResponseDTO updated = rawMaterialService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
 

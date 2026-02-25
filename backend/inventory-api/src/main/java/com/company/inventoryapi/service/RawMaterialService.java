@@ -1,6 +1,7 @@
 package com.company.inventoryapi.service;
 
 import com.company.inventoryapi.dto.RawMaterialRequestDTO;
+import com.company.inventoryapi.dto.RawMaterialResponseDTO;
 import com.company.inventoryapi.entity.RawMaterial;
 import com.company.inventoryapi.exception.BusinessException;
 import com.company.inventoryapi.exception.NotFoundException;
@@ -18,16 +19,19 @@ public class RawMaterialService {
         this.rawMaterialRepository = rawMaterialRepository;
     }
 
-    public List<RawMaterial> findAll() {
-        return rawMaterialRepository.findAll();
+    public List<RawMaterialResponseDTO> findAll() {
+        return rawMaterialRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public RawMaterial findById(Long id) {
-        return rawMaterialRepository.findById(id)
+    public RawMaterialResponseDTO findById(Long id) {
+        RawMaterial rawMaterial = rawMaterialRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("RawMaterial not found with id: " + id));
+        return toResponseDTO(rawMaterial);
     }
 
-    public RawMaterial save(RawMaterialRequestDTO dto) {
+    public RawMaterialResponseDTO save(RawMaterialRequestDTO dto) {
         rawMaterialRepository.findByCode(dto.getCode())
                 .ifPresent(existing -> {
                     throw new BusinessException("RawMaterial with code " + dto.getCode() + " already exists");
@@ -37,27 +41,40 @@ public class RawMaterialService {
         rawMaterial.setCode(dto.getCode());
         rawMaterial.setName(dto.getName());
         rawMaterial.setStockQuantity(dto.getStockQuantity());
-        return rawMaterialRepository.save(rawMaterial);
+        RawMaterial saved = rawMaterialRepository.save(rawMaterial);
+        return toResponseDTO(saved);
     }
 
-    public RawMaterial update(Long id, RawMaterialRequestDTO dto) {
-        RawMaterial rawMaterial = findById(id);
+    public RawMaterialResponseDTO update(Long id, RawMaterialRequestDTO dto) {
+        RawMaterial rawMaterial = rawMaterialRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("RawMaterial not found with id: " + id));
 
         rawMaterialRepository.findByCode(dto.getCode())
+                .filter(existing -> !existing.getId().equals(id))
                 .ifPresent(existing -> {
-                    if (!existing.getId().equals(id)) {
-                        throw new BusinessException("RawMaterial with code " + dto.getCode() + " already exists");
-                    }
+                    throw new BusinessException("RawMaterial with code " + dto.getCode() + " already exists");
                 });
 
         rawMaterial.setCode(dto.getCode());
         rawMaterial.setName(dto.getName());
         rawMaterial.setStockQuantity(dto.getStockQuantity());
-        return rawMaterialRepository.save(rawMaterial);
+        RawMaterial updated = rawMaterialRepository.save(rawMaterial);
+        return toResponseDTO(updated);
     }
 
     public void delete(Long id) {
-        findById(id);
+        if (!rawMaterialRepository.existsById(id)) {
+            throw new NotFoundException("RawMaterial not found with id: " + id);
+        }
         rawMaterialRepository.deleteById(id);
+    }
+
+    private RawMaterialResponseDTO toResponseDTO(RawMaterial rawMaterial) {
+        return new RawMaterialResponseDTO(
+                rawMaterial.getId(),
+                rawMaterial.getCode(),
+                rawMaterial.getName(),
+                rawMaterial.getStockQuantity()
+        );
     }
 }

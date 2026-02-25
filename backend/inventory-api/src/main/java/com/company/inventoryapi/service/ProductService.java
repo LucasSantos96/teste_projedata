@@ -1,6 +1,7 @@
 package com.company.inventoryapi.service;
 
 import com.company.inventoryapi.dto.ProductRequestDTO;
+import com.company.inventoryapi.dto.ProductResponseDTO;
 import com.company.inventoryapi.entity.Product;
 import com.company.inventoryapi.exception.BusinessException;
 import com.company.inventoryapi.exception.NotFoundException;
@@ -18,16 +19,19 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public List<ProductResponseDTO> findAll() {
+        return productRepository.findAll().stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public Product findById(Long id) {
-        return productRepository.findById(id)
+    public ProductResponseDTO findById(Long id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
+        return toResponseDTO(product);
     }
 
-    public Product save(ProductRequestDTO dto) {
+    public ProductResponseDTO save(ProductRequestDTO dto) {
         productRepository.findByCode(dto.getCode())
                 .ifPresent(existing -> {
                     throw new BusinessException("Product with code " + dto.getCode() + " already exists");
@@ -37,6 +41,40 @@ public class ProductService {
         product.setCode(dto.getCode());
         product.setName(dto.getName());
         product.setPrice(dto.getPrice());
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        return toResponseDTO(saved);
+    }
+
+    public ProductResponseDTO update(Long id, ProductRequestDTO dto) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
+
+        productRepository.findByCode(dto.getCode())
+                .filter(existing -> !existing.getId().equals(id))
+                .ifPresent(existing -> {
+                    throw new BusinessException("Product with code " + dto.getCode() + " already exists");
+                });
+
+        product.setCode(dto.getCode());
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        Product updated = productRepository.save(product);
+        return toResponseDTO(updated);
+    }
+
+    public void delete(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new NotFoundException("Product not found with id: " + id);
+        }
+        productRepository.deleteById(id);
+    }
+
+    private ProductResponseDTO toResponseDTO(Product product) {
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getCode(),
+                product.getName(),
+                product.getPrice()
+        );
     }
 }
