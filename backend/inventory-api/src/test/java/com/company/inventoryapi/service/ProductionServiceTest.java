@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +56,7 @@ class ProductionServiceTest {
                 new BigDecimal("2")
         );
 
-        when(productRepository.findAll()).thenReturn(List.of(cheapProduct, expensiveProduct));
+        when(productRepository.findAll()).thenReturn(new ArrayList<>(List.of(cheapProduct, expensiveProduct)));
         when(rawMaterialRepository.findAll()).thenReturn(List.of(sharedMaterial));
         when(productRawMaterialRepository.findAll()).thenReturn(List.of(expensiveRequirement, cheapRequirement));
 
